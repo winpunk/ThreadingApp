@@ -23,6 +23,10 @@ namespace ThreadingApp
             if (!Int32.TryParse(threadTextBox.Text, out int threadCount) || threadCount < 2 || threadCount > 15)
             {
                 MessageBox.Show("You entered the incorrect thread number value. Please enter number from 2 to 15.");
+
+                startButton.Enabled = true;
+                stopButton.Enabled = false;
+
                 return;
             }
 
