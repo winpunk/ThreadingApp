@@ -1,4 +1,6 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace ThreadingApp
@@ -14,26 +16,33 @@ namespace ThreadingApp
 
         public void Update(ConcurrentQueue<string[]> generatedDatas)
         {
-            if (_mainListView.InvokeRequired)
+            try
             {
-                _mainListView.Invoke((MethodInvoker)delegate
+                if (_mainListView.InvokeRequired)
                 {
-                    _mainListView.Items.Clear();
+                    _mainListView.Invoke((MethodInvoker)delegate
+                    {
+                        _mainListView.Items.Clear();
 
+                        foreach (var generatedData in generatedDatas)
+                        {
+                            var listViewItem = new ListViewItem(generatedData);
+                            _mainListView.Items.Add(listViewItem);
+                        }
+                    });
+                }
+                else
+                {
                     foreach (var generatedData in generatedDatas)
                     {
                         var listViewItem = new ListViewItem(generatedData);
                         _mainListView.Items.Add(listViewItem);
                     }
-                });
-            }
-            else
-            {
-                foreach (var generatedData in generatedDatas)
-                {
-                    var listViewItem = new ListViewItem(generatedData);
-                    _mainListView.Items.Add(listViewItem);
                 }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("ListView update error: " + ex.Message);
             }
         }
     }

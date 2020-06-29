@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace ThreadingApp
 {
@@ -6,18 +7,26 @@ namespace ThreadingApp
     {
         public void Insert(string[] randomLineData)
         {
-            using (var db = new GeneratedDataContext())
+            try
             {
-                var randomLine = new RandomLine()
+                using (var db = new GeneratedDataContext())
                 {
-                    ThreadId = Int32.Parse(randomLineData[0]),
-                    Time = DateTime.Now,
-                    Data = randomLineData[1]
-                };
+                    var randomLine = new RandomLine()
+                    {
+                        ThreadId = Int32.Parse(randomLineData[0]),
+                        Time = DateTime.Now,
+                        Data = randomLineData[1]
+                    };
 
-                db.RandomLines.Add(randomLine);
-                db.SaveChanges();
+                    db.RandomLines.Add(randomLine);
+                    db.SaveChanges();
+                }
             }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Database error: " + ex.Message);
+            }
+            
         }
     }
 }

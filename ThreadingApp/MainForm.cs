@@ -15,6 +15,9 @@ namespace ThreadingApp
 
         private void startButton_Click(object sender, EventArgs e)
         {
+            startButton.Enabled = false;
+            stopButton.Enabled = true;
+
             mainListView.Items.Clear();
 
             if (!Int32.TryParse(threadTextBox.Text, out int threadCount) || threadCount < 2 || threadCount > 15)
@@ -29,6 +32,9 @@ namespace ThreadingApp
         private void stopButton_Click(object sender, EventArgs e)
         {
             _threadManager.StopThreads();
+
+            startButton.Enabled = true;
+            stopButton.Enabled = false;
         }
     }
 }

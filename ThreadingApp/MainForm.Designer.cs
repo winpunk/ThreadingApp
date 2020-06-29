@@ -66,6 +66,7 @@
             // 
             // stopButton
             // 
+            this.stopButton.Enabled = false;
             this.stopButton.Location = new System.Drawing.Point(142, 54);
             this.stopButton.Name = "stopButton";
             this.stopButton.Size = new System.Drawing.Size(75, 23);
@@ -87,7 +88,6 @@
             this.mainListView.Name = "mainListView";
             this.mainListView.Size = new System.Drawing.Size(267, 423);
             this.mainListView.Sorting = System.Windows.Forms.SortOrder.Ascending;
-            this.mainListView.ListViewItemSorter = new Sorter();
             this.mainListView.TabIndex = 3;
             this.mainListView.UseCompatibleStateImageBehavior = false;
             this.mainListView.View = System.Windows.Forms.View.Details;

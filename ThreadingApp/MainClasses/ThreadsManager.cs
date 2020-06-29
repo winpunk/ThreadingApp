@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -31,18 +32,25 @@ namespace ThreadingApp
 
             var random = new Random();
 
-            for (int i = 0; i < threadCount; i++)
+            try
             {
-                CancellationToken ct = _stopThreadingTokenSource.Token;                
-
-                string iCopy = (i + 1).ToString();
-
-                _threads[i] = Task.Factory.StartNew(() =>
+                for (int i = 0; i < threadCount; i++)
                 {
-                    Thread.CurrentThread.Name = iCopy;
+                    CancellationToken ct = _stopThreadingTokenSource.Token;
 
-                    GeneratorThread(random, ct);
-                }, ct);
+                    string iCopy = (i + 1).ToString();
+
+                    _threads[i] = Task.Factory.StartNew(() =>
+                    {
+                        Thread.CurrentThread.Name = iCopy;
+
+                        GeneratorThread(random, ct);
+                    }, ct);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Error: " + ex.Message);
             }
         }
 
@@ -55,19 +63,26 @@ namespace ThreadingApp
         {
             int interval = random.Next(500, 2000);
 
-            while (!ct.IsCancellationRequested)
+            try
             {
-                if (_generatedDatas.Count > 20) _generatedDatas.TryDequeue(out _);
+                while (!ct.IsCancellationRequested)
+                {
+                    if (_generatedDatas.Count > 20) _generatedDatas.TryDequeue(out _);
 
-                var lineData = _lineGenerator.Generate(random);                
+                    var lineData = _lineGenerator.Generate(random);
 
-                _generatedDatas.Enqueue(lineData);
+                    _generatedDatas.Enqueue(lineData);
 
-                _listUpdater.Update(_generatedDatas);
+                    _listUpdater.Update(_generatedDatas);
 
-                _dbManager.Insert(lineData);
+                    _dbManager.Insert(lineData);
 
-                Thread.Sleep(interval);
+                    Thread.Sleep(interval);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Error: " + ex.Message);
             }
         }
     }
